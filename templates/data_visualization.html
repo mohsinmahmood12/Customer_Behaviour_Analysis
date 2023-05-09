@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Data Visualization</h1>
+    <div class="visualization">
+        <h2>Sales by Category</h2>
+        <canvas id="sales-by-category"></canvas>
+        <h2>Customer Lifetime Value by Segment</h2>
+        <canvas id="clv-by-segment"></canvas>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script>
+        // Define data and options for the sales by category chart
+        var salesByCategoryData = {
+            labels: ["Electronics", "Clothing", "Home & Garden", "Toys & Games"],
+            datasets: [{
+                label: "Sales",
+                data: [12345, 67890, 23456, 78901],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56",
+                    "#4BC0C0"
+                ]
+            }]
+        };
+        var salesByCategoryOptions = {
+            responsive: true,
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Sales by Category'
+            }
+        };
+        var salesByCategoryChart = new Chart(document.getElementById('sales-by-category'), {
+            type: 'pie',
+            data: salesByCategoryData,
+            options: salesByCategoryOptions
+        });
+
+        // Define data and options for the CLV by segment chart
+        var clvBySegmentData = {
+            labels: ["Segment 1", "Segment 2", "Segment 3"],
+            datasets: [{
+                label: "Customer Lifetime Value",
+                data: [12345, 67890, 23456],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56"
+                ]
+            }]
+        };
+        var clvBySegmentOptions = {
+            responsive: true,
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Customer Lifetime Value by Segment'
+            }
+        };
+        var clvBySegmentChart = new Chart(document.getElementById('clv-by-segment'), {
+            type: 'bar',
+            data: clvBySegmentData,
+            options: clvBySegmentOptions
+        });
+    </script>
+{% endblock %}

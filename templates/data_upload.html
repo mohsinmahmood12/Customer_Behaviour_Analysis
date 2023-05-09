@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Data Upload</h1>
+    {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="input-group">
+            <label for="datafile">Data File:</label>
+            <input type="file" name="datafile" id="datafile" required>
+        </div>
+        <button type="submit">Upload Data</button>
+    </form>
+{% endblock %}

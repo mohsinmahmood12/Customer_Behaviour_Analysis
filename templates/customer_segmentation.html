@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Customer Segmentation</h1>
+    <div class="segmentation">
+        <h2>Customer Segments by Age and Gender</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Segment</th>
+                    <th>Age Range</th>
+                    <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Segment 1</td>
+                    <td>18-24</td>
+                    <td>Male</td>
+                </tr>
+                <tr>
+                    <td>Segment 2</td>
+                    <td>25-34</td>
+                    <td>Female</td>
+                </tr>
+                <tr>
+                    <td>Segment 3</td>
+                    <td>35-44</td>
+                    <td>Male</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Customer Segments by Purchase History</h2>
+        <canvas id="purchase-history"></canvas>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+    <script>
+        // Define data and options for the purchase history chart
+        var purchaseHistoryData = {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [{
+                label: "Segment 1",
+                data: [12, 19, 3, 5, 2, 3, 8],
+                borderColor: "#FF6384",
+                fill: false
+            }, {
+                label: "Segment 2",
+                data: [6, 8, 9, 12, 7, 2, 5],
+                borderColor: "#36A2EB",
+                fill: false
+            }, {
+                label: "Segment 3",
+                data: [3, 5, 7, 4, 6, 9, 11],
+                borderColor: "#FFCE56",
+                fill: false
+            }]
+        };
+        var purchaseHistoryOptions = {
+            responsive: true,
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Purchase History by Segment'
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Month'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Value'
+                    }
+                }]
+            }
+        };
+        var purchaseHistoryChart = new Chart(document.getElementById('purchase-history'), {
+            type: 'line',
+            data: purchaseHistoryData,
+            options: purchaseHistoryOptions
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>User Management</h1>
+    <div class="users">
+        <h2>Current Users</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>admin</td>
+                    <td>Administrator</td>
+                    <td>
+                        <a href="#">Edit</a>
+                        <a href="#">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>user1</td>
+                    <td>User</td>
+                    <td>
+                        <a href="#">Edit</a>
+                        <a href="#">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>user2</td>
+                    <td>User</td>
+                    <td>
+                        <a href="#">Edit</a>
+                        <a href="#">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Add User</h2>
+        <form>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username">
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password">
+            <label for="role">Role:</label>
+            <select name="role" id="role">
+                <option value="user">User</option>
+                <option value="admin">Administrator</option>
+            </select>
+            <button type="submit">Add User</button>
+        </form>
+    </div>
+{% endblock %}
