@@ -8,8 +8,24 @@ import json
 import pandas as pd
 from keras.models import load_model
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, session
+from flask_sqlalchemy import SQLAlchemy
+import sqlite3
+from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
+
+with app.app_context():
+    db.create_all()
+
 
 # Load your saved models here
 dt_model = joblib.load('dt_model.pkl')
@@ -30,12 +46,50 @@ def preprocess(text):
     input_pad = pad_sequences(input_seq, maxlen=max_len)
     return input_pad
 
+app.secret_key = os.urandom(24)
+# User authentication (FR-01)
+# You can implement user authentication using a database like SQLite, MySQL, or PostgreSQL
+# For demonstration purposes, we'll use an in-memory dictionary
+users = {
+    "admin": "password",
+}
+
+
 @app.route('/', methods=['GET', 'POST'])
-def index():
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.password == password:
+            session['user'] = username
+            session['role'] = user.role
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid credentials', 'error')
+    return render_template('login.html')
+
+
+
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("dashboard.html")
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("login"))
+
+
+@app.route('/predict-sentiment', methods=['GET', 'POST'])
+def predict_sentiment():
+    if "user" not in session:
+        return redirect(url_for("login"))
     if request.method == 'POST':
         text = request.form['text']
         model_name = request.form['model']
-        
         # Preprocess the text
         preprocessed_text = preprocess(text)
         
@@ -57,37 +111,10 @@ def index():
 
         sentiment = 'positive' if prediction[0] == 1 else 'negative'
         
-        return render_template('index.html', sentiment=sentiment)
+        return render_template('predict_sentiment.html', sentiment=sentiment)
     else:
-        return render_template('index.html')
+        return render_template('predict_sentiment.html')
     
-
-app.secret_key = os.urandom(24)
-# User authentication (FR-01)
-# You can implement user authentication using a database like SQLite, MySQL, or PostgreSQL
-# For demonstration purposes, we'll use an in-memory dictionary
-users = {
-    "admin": "password",
-}
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        if username in users and users[username] == password:
-            session["user"] = username
-            return redirect(url_for("data_upload"))
-        else:
-            flash("Invalid credentials", "error")
-
-    return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-    session.pop("user", None)
-    return redirect(url_for("login"))
 
 # Data Upload (FR-02)
 @app.route("/data-upload", methods=["GET", "POST"])
@@ -142,11 +169,28 @@ def customer_lifetime_value():
 # User Management (FR-07)
 @app.route("/user-management")
 def user_management():
-    if "user" not in session:
+    if 'user' not in session or session['role'] != 'admin':
         return redirect(url_for("login"))
 
     # Implement user management (add, remove, assign roles, set permissions)
     return render_template("user_management.html")
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+        new_user = User(username=username, password=password, role=role)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('User created successfully', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+
 if __name__ == "__main__":
+    for rule in app.url_map.iter_rules():
+        print(rule.endpoint)
+
     app.run(debug=True)

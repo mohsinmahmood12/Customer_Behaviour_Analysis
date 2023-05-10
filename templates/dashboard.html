@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <a href="{{ url_for('data_upload') }}">
+        <div class="option-box">
+            <h3>Data Upload</h3>
+            <p>Upload your data for analysis.</p>
+        </div>
+    </a>
+    <a href="{{ url_for('data_visualization') }}">
+        <div class="option-box">
+            <h3>Data Visualization</h3>
+            <p>Visualize your data and gain insights.</p>
+        </div>
+    </a>
+    <a href="{{ url_for('customer_segmentation') }}">
+        <div class="option-box">
+            <h3>Customer Segmentation</h3>
+            <p>Segment your customers for targeted marketing.</p>
+        </div>
+    </a>
+    <a href="{{ url_for('purchase_prediction') }}">
+        <div class="option-box">
+            <h3>Purchase Prediction</h3>
+            <p>Predict future customer purchases.</p>
+        </div>
+    </a>
+    <a href="{{ url_for('customer_lifetime_value') }}">
+        <div class="option-box">
+            <h3>Customer Lifetime Value</h3>
+            <p>Calculate the lifetime value of your customers.</p>
+        </div>
+    </a>
+    <a href="{{ url_for('user_management') }}">
+        <div class="option-box">
+            <h3>User Management</h3>
+            <p>Manage users, roles, and permissions.</p>
+        </div>
+    </a>
+    <a href="{{ url_for('predict_sentiment') }}">
+        <div class="option-box">
+            <h3>Predict Sentiment</h3>
+            <p>Analyze text sentiment using different models.</p>
+        </div>
+    </a>
+</div>
+<form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+    <input type="submit" value="Logout" class="logout-btn">
+</form>
+{% endblock %}
